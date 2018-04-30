@@ -17,7 +17,7 @@ import com.bbeaggoo.myapplication.datas.ItemObjects;
 
 import java.util.List;
 
-public class FileManagerActivity extends AppCompatActivity implements FileManagerMvpView {
+public class FileManagerActivity extends BaseActivity implements FileManagerMvpView {
     private View emptyView;
     RecyclerView recyclerView;
     private ListRecyclerViewAdapter listViewAdapter;
@@ -42,6 +42,8 @@ public class FileManagerActivity extends AppCompatActivity implements FileManage
             }
         });
 
+        listViewAdapter = new ListRecyclerViewAdapter(this);
+
         presenter.setImageAdapterModel(listViewAdapter);
         presenter.setImageAdapterView(listViewAdapter);
         presenter.loadItemList();
@@ -52,8 +54,15 @@ public class FileManagerActivity extends AppCompatActivity implements FileManage
 
     }
 
+    //Q. initPresenter()는 누가 호출해주냐?
+    // BaseActivity의 onCreate() 에서 호출해준다.
     @Override
     public void initPresenter(BaseActivity baseActivity) {
+        // 1. Activity/Fragment/View에서 필요한 Presenter을 직접 생성
+        // 2. setView을 전달한다
+        presenter = new FileManagerMvpPresenterImpl<>(); //realm 작업을 해줘야 할듯..
+        presenter.attachView(this);
+        //attachView()가 setView()인듯.
 
     }
 
