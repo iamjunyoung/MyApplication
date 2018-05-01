@@ -13,7 +13,7 @@ public interface FileManagerMvpPresenter<MvpView extends BaseMvpView> extends Ba
     // Activity(View)에서 호출할 메서드 들이라고 보면 될듯?
     // Activity(View)가 보여질 때 item들을 load해야 하며
     // 이때 Presenter의 loadItemList()를 호출한다.
-    void loadItemList();
+    void loadItemList(String curPath, boolean isNeededClear);
 
     void addItem(String title);
     // remove, modify 도 필요할듯?

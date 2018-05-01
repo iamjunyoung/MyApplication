@@ -26,14 +26,19 @@ public class ListRecyclerViewAdapter  extends RecyclerView.Adapter<ViewHolder>
     public static final int VIEW_TYPE_NORMAL = 0;
     public static final int VIEW_TYPE_FIRST = 1;
 
-    private List<ItemObjects> itemList;
+    //ArrayList<ItemObjects> listAllItems=new ArrayList<ItemObjects>();
+    //ArrayList<ItemObjects> listDispItems=new ArrayList<ItemObjects>();
+
+    ArrayList<ItemObjects> itemList; // --> listAllItems
+    ArrayList<ItemObjects> dispItemList; // --> listDispItems
+
     //아래처럼 바꾸는게 맞는가?
     //private List itemList;
 
     private Context context;
     private String TAG = "Solvent";
 
-    public ListRecyclerViewAdapter(Context context, List<ItemObjects> itemList) {
+    public ListRecyclerViewAdapter(Context context, ArrayList<ItemObjects> itemList) {
         this.itemList = itemList;
         this.context = context;
     }
@@ -42,7 +47,8 @@ public class ListRecyclerViewAdapter  extends RecyclerView.Adapter<ViewHolder>
     // 왜 TodoListener 라는 형태로 만들었을까? (예제앱은)
     public ListRecyclerViewAdapter(Context context) {
         this.context = context;
-        itemList = new ArrayList<>();
+        itemList = new ArrayList<ItemObjects>();
+        dispItemList = new ArrayList<ItemObjects>();
     }
 
     @Override
@@ -183,6 +189,13 @@ public class ListRecyclerViewAdapter  extends RecyclerView.Adapter<ViewHolder>
     @Override
     public int getSize() {
         return 0;
+    }
+
+    @Override
+    public void clearItem() {
+        if (itemList != null) {
+            itemList.clear();
+        }
     }
 
     @Override

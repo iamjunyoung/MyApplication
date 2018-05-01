@@ -4,9 +4,13 @@ public class ItemObjects {
     //PrimaryKey
     private int id;
 
-    private String name;
+    public String name;
     private int photo;
     private int height = -1;
+
+    public ItemObjects() {
+
+    }
 
     public ItemObjects(int id, String name, int photo) {
         this.id = id;

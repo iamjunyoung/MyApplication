@@ -15,6 +15,7 @@ public interface AdapterContract{
         ItemObjects getPhoto(int position);
         void addItems(List<ItemObjects> list);
         int getSize();
+        void clearItem();
     }
 
     interface View {

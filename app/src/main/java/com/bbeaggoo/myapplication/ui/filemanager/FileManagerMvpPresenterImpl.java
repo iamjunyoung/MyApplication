@@ -34,11 +34,15 @@ public class FileManagerMvpPresenterImpl <MvpView extends BaseMvpView> extends R
 
     ////////// FilemanagerMvpPresenter //////////
     @Override
-    public void loadItemList() {
+    public void loadItemList(boolean isNeededClear) {
         List<ItemObjects> itemList = FileItemsManager.getFileItemsData();   // 1. Model
+
+        if (isNeededClear) {
+            adapterModel.clearItem();
+        }
+
         if (null != itemList && itemList.isEmpty()) {
             Log.i("JYN", "[FileManagerMvpPresenterImpl][loadItemList] showEmtpyView : " + itemList);
-
             view.showEmtpyView();
         } else {
             // 2. AdapterModel
