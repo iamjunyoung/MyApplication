@@ -11,17 +11,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.bbeaggoo.myapplication.R;
 import com.bbeaggoo.myapplication.adapter.ListRecyclerViewAdapter;
 import com.bbeaggoo.myapplication.common.BaseActivity;
 import com.bbeaggoo.myapplication.datas.ItemObjects;
 
-import java.io.File;
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class FileManagerActivity extends BaseActivity implements FileManagerMvpView {
@@ -31,13 +29,12 @@ public class FileManagerActivity extends BaseActivity implements FileManagerMvpV
     private LinearLayoutManager layoutManager;// For MVP
     public FileManagerMvpPresenter<FileManagerActivity> presenter;
 
+    EditText editView;
+    TextView textView;
 
-    private String root= Environment.getExternalStorageDirectory().getAbsolutePath();    // 최상위 폴더
+    //private String root= Environment.getExternalStorageDirectory().getAbsolutePath();    // 최상위 폴더
     private String curPath=Environment.getExternalStorageDirectory().getAbsolutePath();  // 현재 탐색하는 폴더
-    // itemFiles는 화면에 display되는 파일이나 폴더 이름이 되고,
-    // pathFiles list는 화면에 display되는 list의 경로와 이름이 붙어있는 목록.
-    private ArrayList<String> itemFiles = new ArrayList<String>();
-    private ArrayList<String> pathFiles = new ArrayList<String>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +42,11 @@ public class FileManagerActivity extends BaseActivity implements FileManagerMvpV
         setContentView(R.layout.activity_file_manager);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        layoutManager = new ItemLayoutManger(this);
+        recyclerView.setLayoutManager(layoutManager);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -56,12 +58,11 @@ public class FileManagerActivity extends BaseActivity implements FileManagerMvpV
         });
 
         listViewAdapter = new ListRecyclerViewAdapter(this);
-
-        //recyclerView.setAdapter(rcAdapter);
+        recyclerView.setAdapter(listViewAdapter);
 
         presenter.setImageAdapterModel(listViewAdapter);
         presenter.setImageAdapterView(listViewAdapter);
-        presenter.loadItemList(false);
+        presenter.loadItemList(curPath, false);
     }
 
     @Override
@@ -117,23 +118,10 @@ public class FileManagerActivity extends BaseActivity implements FileManagerMvpV
         }
 
         @Override
-        protected String doInBackground(String... strings) {
-            getDirInfo(curPath);
+        protected String doInBackground(String... params) { // viewholder에서 onClick을 받을 때, curPath를 execute(curPath) 형태로 넘겨줄 수 있도록.
+            String curPath = params[0];
+            presenter.loadItemList(curPath, true); // -> 이거 메서드 명을 바꿔야 할듯? loadCurrentPathFileInfo ?? 이런 식으로??
 
-            //현재 getDirInfo()한 애의 정보를 load
-            for(int i=0;i<itemFiles.size();i++){
-                ItemObjects item = new ItemObjects();
-                item.checked = false;
-                item.name = itemFiles.get(i);
-                item.path = pathFiles.get(i);
-                listAllItems.add(item);
-            }
-            presenter.loadItemList(curPath, true); // -> 이거 메서드 명을 바꿔야 할듯? loadCurrentDirFileInfo ?? 이런 식으로??
-
-            if (listAllItems != null) {
-                Collections.sort(listAllItems, nameComparator);
-            }
-            listDispItems.addAll(listAllItems);
             return null;
         }
 
@@ -141,48 +129,15 @@ public class FileManagerActivity extends BaseActivity implements FileManagerMvpV
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             mDlg.dismiss();
-            listadapter=new ListRecyclerViewAdapter(mContext);
-            listView.setAdapter(listadapter);              // listView -> recyclerView
+            listViewAdapter = new ListRecyclerViewAdapter(mContext);
+            layoutManager = new ItemLayoutManger(mContext);
+            recyclerView.setAdapter(listViewAdapter);
 
             String searchText = editView.getText().toString();
-            if( listadapter!=null ) listadapter.fillter(searchText);
+            if( listViewAdapter!=null ) listViewAdapter.fillter(searchText);
 
             textView.setText("Location: " + curPath);
         }
-        private final Comparator<ItemObjects> nameComparator
-                = new Comparator<ItemObjects>() {
-            public final int
-            compare(ItemObjects a, ItemObjects b) {
-                return collator.compare(a.name, b.name);
-            }
-            private final Collator collator = Collator.getInstance();
-        };
-    }
 
-    private void getDirInfo(String dirPath)
-    {
-        if(!dirPath.endsWith("/")) dirPath = dirPath+"/";
-        File f = new File(dirPath);
-        File[] files = f.listFiles();
-        if( files == null ) return;
-
-        itemFiles.clear();
-        pathFiles.clear();
-
-        if( !root.endsWith("/") ) root = root+"/";
-        if( !root.equals(dirPath) ) {
-            itemFiles.add("../");
-            pathFiles.add(f.getParent());
-        }
-
-        for(int i=0; i < files.length; i++){
-            File file = files[i];
-            pathFiles.add(file.getPath());
-
-            if(file.isDirectory())
-                itemFiles.add(file.getName() + "/");
-            else
-                itemFiles.add(file.getName());
-        }
     }
 }

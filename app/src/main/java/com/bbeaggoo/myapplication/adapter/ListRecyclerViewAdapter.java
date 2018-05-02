@@ -29,8 +29,9 @@ public class ListRecyclerViewAdapter  extends RecyclerView.Adapter<ViewHolder>
     //ArrayList<ItemObjects> listAllItems=new ArrayList<ItemObjects>();
     //ArrayList<ItemObjects> listDispItems=new ArrayList<ItemObjects>();
 
+    //어차피 둘 중에 하나만 쓰면 될듯
     ArrayList<ItemObjects> itemList; // --> listAllItems
-    ArrayList<ItemObjects> dispItemList; // --> listDispItems
+    //ArrayList<ItemObjects> dispItemList; // --> listDispItems
 
     //아래처럼 바꾸는게 맞는가?
     //private List itemList;
@@ -48,7 +49,6 @@ public class ListRecyclerViewAdapter  extends RecyclerView.Adapter<ViewHolder>
     public ListRecyclerViewAdapter(Context context) {
         this.context = context;
         itemList = new ArrayList<ItemObjects>();
-        dispItemList = new ArrayList<ItemObjects>();
     }
 
     @Override
@@ -216,5 +216,33 @@ public class ListRecyclerViewAdapter  extends RecyclerView.Adapter<ViewHolder>
     @Override
     public void refreshItemChanged(int position) {
 
+    }
+
+    public void fillter(String searchText) {
+        ArrayList<ItemObjects> itemListTemp = new ArrayList<ItemObjects>(); // --> listAllItems
+        itemListTemp.addAll(itemList);
+
+        itemList.clear();
+        //totalSelected = 0;
+        for(int i = 0;i<itemListTemp.size();i++){
+            ItemObjects item = itemListTemp.get(i);
+            item.checked = false;
+            //item.selectedNumber = 0;
+        }
+        if(searchText.length() == 0)
+        {
+            itemList.addAll(itemListTemp);
+        }
+        else
+        {
+            for( ItemObjects item : itemListTemp)
+            {
+                if(item.name.contains(searchText))
+                {
+                    itemList.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 }

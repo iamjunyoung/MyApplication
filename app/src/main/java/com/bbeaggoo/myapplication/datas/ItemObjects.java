@@ -5,6 +5,8 @@ public class ItemObjects {
     private int id;
 
     public String name;
+    public boolean checked;
+    public String path;
     private int photo;
     private int height = -1;
 
