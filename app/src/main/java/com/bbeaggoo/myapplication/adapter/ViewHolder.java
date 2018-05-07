@@ -12,5 +12,5 @@ import com.bbeaggoo.myapplication.datas.ItemObjects;
 
 public abstract class ViewHolder extends RecyclerView.ViewHolder {
     public ViewHolder(View itemView) { super(itemView); }
-    abstract void bind(Context context, ItemObjects item);
+    abstract void bind(Context context, ItemObjects item, int position);
 }

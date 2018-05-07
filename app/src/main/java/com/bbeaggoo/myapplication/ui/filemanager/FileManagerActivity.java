@@ -12,8 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bbeaggoo.myapplication.R;
 import com.bbeaggoo.myapplication.adapter.ListRecyclerViewAdapter;
@@ -47,6 +47,9 @@ public class FileManagerActivity extends BaseActivity implements FileManagerMvpV
         layoutManager = new ItemLayoutManger(this);
         recyclerView.setLayoutManager(layoutManager);
 
+        //DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getApplicationContext(), layoutManager.getOrientation());
+        //recyclerView.addItemDecoration(dividerItemDecoration);
+        //Diveder관련. 출처: http://liveonthekeyboard.tistory.com/137 [키위남]
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -79,13 +82,12 @@ public class FileManagerActivity extends BaseActivity implements FileManagerMvpV
         presenter = new FileManagerMvpPresenterImpl<>(); //realm 작업을 해줘야 할듯..
         presenter.attachView(this);
         //attachView()가 setView()인듯.
-
     }
 
     /////////////////////////////////////////////////////////////////
     @Override
     public void onUpdateItemList(List<ItemObjects> itemList) {
-        emptyView.setVisibility(View.GONE);
+        //emptyView.setVisibility(View.GONE);
     }
 
     @Override
@@ -96,6 +98,11 @@ public class FileManagerActivity extends BaseActivity implements FileManagerMvpV
     @Override
     public void showEmtpyView() {
 
+    }
+
+    @Override
+    public void showToast(String s) {
+        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
     ///////////////////////////////////////////////////////////////////
 

@@ -19,4 +19,5 @@ interface FileManagerMvpView extends BaseMvpView {
 
     void showEmtpyView();
 
+    void showToast(String s);
 }

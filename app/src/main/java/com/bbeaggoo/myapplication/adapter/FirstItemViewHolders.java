@@ -29,11 +29,11 @@ public class FirstItemViewHolders extends ViewHolder implements View.OnClickList
     }
 
     @Override
-    void bind(Context context, ItemObjects item) {
-        setFirstItem(context, item);
+    void bind(Context context, ItemObjects item, int position) {
+        setFirstItem(context, item, position);
     }
 
-    private void setFirstItem(final Context context, final ItemObjects item) {
+    private void setFirstItem(final Context context, final ItemObjects item, final int position) {
         countryName.setText(item.getName());
 
 //        Glide.with(context)
@@ -44,8 +44,7 @@ public class FirstItemViewHolders extends ViewHolder implements View.OnClickList
         itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                int holderPosition = ((MyViewHolders) v.getTag()).getAdapterPosition();
-                Log.i("JYN", "Category : " + item.getName() + "    pos : " + holderPosition + " 's itemView is long clicked");
+                Log.i("JYN", "Category : " + item.getName() + "    pos : " + position + " 's itemView is long clicked");
                 Toast.makeText(context, "Long clicked item = " + item.getName(), Toast.LENGTH_SHORT).show();
                 return true;
             }

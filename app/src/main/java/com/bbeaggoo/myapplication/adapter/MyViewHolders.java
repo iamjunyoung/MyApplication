@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.bbeaggoo.myapplication.R;
 import com.bbeaggoo.myapplication.datas.ItemObjects;
+import com.bbeaggoo.myapplication.listener.OnItemClickListener;
 import com.bumptech.glide.Glide;
 
 
@@ -18,10 +19,14 @@ public class MyViewHolders extends ViewHolder implements View.OnClickListener{
     public CardView cardView;
     public TextView countryName;
     public ImageView countryPhoto;
+    private OnItemClickListener onItemClickListener;
 
-    public MyViewHolders(View itemView) {
+    public MyViewHolders(View itemView, OnItemClickListener onItemClickListener) {
         super(itemView);
         itemView.setOnClickListener(this);
+
+        this.onItemClickListener = onItemClickListener;
+
         ///
         cardView = (CardView)itemView.findViewById(R.id.card_view);
         ///
@@ -30,11 +35,11 @@ public class MyViewHolders extends ViewHolder implements View.OnClickListener{
     }
 
     @Override
-    void bind(Context context, ItemObjects item) {
-        setNormalItem(context, item);
+    void bind(Context context, ItemObjects item, int position) {
+        setNormalItem(context, item, position);
     }
 
-    private void setNormalItem(final Context context, final ItemObjects item) {
+    private void setNormalItem(final Context context, final ItemObjects item, final int position) {
         countryName.setText(item.getName());
 
             Glide.with(context)
@@ -46,8 +51,6 @@ public class MyViewHolders extends ViewHolder implements View.OnClickListener{
         itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                //int holderPosition = ((SolventViewHolders) v.getTag()).getAdapterPosition();
-                //Log.i("JYN", "Category : " + item.getName() + "    pos : " + holderPosition + " 's itemView is long clicked");
                 Toast.makeText(context, "Long clicked item = " + item.getName(), Toast.LENGTH_SHORT).show();
                 return true;
             }
@@ -56,7 +59,29 @@ public class MyViewHolders extends ViewHolder implements View.OnClickListener{
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Clicked item = " + item.getName(), Toast.LENGTH_SHORT).show();
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(position);
+                    /*
+                    if (item == null) {
+                        Toast.makeText(context, "Clicked item is null.. return", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    File file = new File(item.path);
+                    if (file.isDirectory()) {
+                        if (file.canRead()) {
+                            CurPath = path;
+                            setupAdapter();
+                        } else {
+
+                        }
+                        Log.i("JYN", "[MyViewHolders][setOnClickListener] " + item.getName() + " is dir");
+                    } else {
+                        Log.i("JYN", "[MyViewHolders][setOnClickListener] " + item.getName() + " is file");
+                    }
+                    */
+                    Toast.makeText(context, "Clicked item = " + item.getName(), Toast.LENGTH_SHORT).show();
+
+                }
             }
         });
     }

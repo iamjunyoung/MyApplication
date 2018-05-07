@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.bbeaggoo.myapplication.R;
 import com.bbeaggoo.myapplication.datas.ItemObjects;
 import com.bbeaggoo.myapplication.itemtouchhelper.ItemTouchHelperListener;
+import com.bbeaggoo.myapplication.listener.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +40,8 @@ public class ListRecyclerViewAdapter  extends RecyclerView.Adapter<ViewHolder>
     private Context context;
     private String TAG = "Solvent";
 
+    private OnItemClickListener onItemClickListener;
+
     public ListRecyclerViewAdapter(Context context, ArrayList<ItemObjects> itemList) {
         this.itemList = itemList;
         this.context = context;
@@ -55,15 +58,19 @@ public class ListRecyclerViewAdapter  extends RecyclerView.Adapter<ViewHolder>
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = null;
 
-        if (viewType == VIEW_TYPE_NORMAL) {
+        //if (viewType == VIEW_TYPE_NORMAL) {
             Log.i("JYN", "hi ");
             view = LayoutInflater.from(context).inflate(R.layout.item_list, parent, false);
-            return new MyViewHolders(view);
-        } else {
+            return new MyViewHolders(view, onItemClickListener);
+        //}
+        /*
+        else {
             Log.i("JYN", "hi FirstItemViewHolders ");
             view = LayoutInflater.from(context).inflate(R.layout.item_staggered_first, parent, false);
             return new FirstItemViewHolders(view);
         }
+        */
+
     }
 
     @Override
@@ -75,7 +82,7 @@ public class ListRecyclerViewAdapter  extends RecyclerView.Adapter<ViewHolder>
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.bind(context, itemList.get(position));
+        holder.bind(context, itemList.get(position), position);
     }
 
     private Bitmap resize(int image) {
@@ -176,8 +183,8 @@ public class ListRecyclerViewAdapter  extends RecyclerView.Adapter<ViewHolder>
     }
 
     @Override
-    public ItemObjects getPhoto(int position) {
-        return null;
+    public ItemObjects get(int position) {
+        return itemList.get(position);
     }
 
     @Override
@@ -216,6 +223,11 @@ public class ListRecyclerViewAdapter  extends RecyclerView.Adapter<ViewHolder>
     @Override
     public void refreshItemChanged(int position) {
 
+    }
+
+    @Override
+    public void setOnClickListener(OnItemClickListener clickListener) {
+        this.onItemClickListener = clickListener;
     }
 
     public void fillter(String searchText) {

@@ -1,5 +1,7 @@
 package com.bbeaggoo.myapplication.singletons;
 
+import android.util.Log;
+
 import com.bbeaggoo.myapplication.datas.ItemObjects;
 
 import java.text.Collator;
@@ -19,6 +21,9 @@ public class FileItemsManager {
     private static int maxId = -1;
 
     public static ArrayList<ItemObjects> getFileItemsData(String curPath, ArrayList<String> itemFiles, ArrayList<String> pathFiles) {
+        listViewItems =  new ArrayList<ItemObjects>();
+        listDispItems =  new ArrayList<ItemObjects>();
+
         // 현재 device의 file 구조를 읽어, dir, file을 구조화 한다.
         // 각 dir, file들을 ItemObjects로 만든다.
         // ItemObjects에 대해서 FileItemObject, DirItemObject 등으로 구분해야 할 필요도 있을듯.
@@ -28,6 +33,7 @@ public class FileItemsManager {
             item.checked = false;
             item.name = itemFiles.get(i);
             item.path = pathFiles.get(i);
+            Log.i("JYN", "[FileItemsManager][getFileItemData] name : " + item.name + "  path : " + item.path);
             listViewItems.add(item);
         }
 

@@ -7,6 +7,7 @@ import com.bbeaggoo.myapplication.adapter.AdapterContract;
 import com.bbeaggoo.myapplication.common.BaseMvpView;
 import com.bbeaggoo.myapplication.common.RxPresenter;
 import com.bbeaggoo.myapplication.datas.ItemObjects;
+import com.bbeaggoo.myapplication.listener.OnItemClickListener;
 import com.bbeaggoo.myapplication.singletons.FileItemsManager;
 
 import java.io.File;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
  */
 
 public class FileManagerMvpPresenterImpl <MvpView extends BaseMvpView> extends RxPresenter
-        implements FileManagerMvpPresenter<MvpView> {
+        implements FileManagerMvpPresenter<MvpView>, OnItemClickListener {
 
     private FileManagerMvpView view; //view를 갖고있다.
 
@@ -33,7 +34,7 @@ public class FileManagerMvpPresenterImpl <MvpView extends BaseMvpView> extends R
 
     @Override
     public void attachView(MvpView view) {
-
+        this.view = (FileManagerMvpView) view;
     }
 
     @Override
@@ -46,7 +47,6 @@ public class FileManagerMvpPresenterImpl <MvpView extends BaseMvpView> extends R
     public void loadItemList(String curPath, boolean isNeededClear) {
         getDirInfo(curPath);
         ArrayList<ItemObjects> itemList = FileItemsManager.getFileItemsData(curPath, itemFiles, pathFiles);   // 1. Model
-
 
         if (isNeededClear) {
             adapterModel.clearItem();
@@ -63,6 +63,8 @@ public class FileManagerMvpPresenterImpl <MvpView extends BaseMvpView> extends R
             adapterView.refreshItemList();
             // 4. Veiw
             view.onUpdateItemList(itemList); // --> 이후 onUpdateItemList 에서는 rcAdapter.addItems(itemList);를 해주게 됨.
+            //adapter를 MVP로 수정한 현재 상황에서
+            //위의 onUpdateItemList() 는 딱히 하는 일이 없는듯??
         }
 
     }
@@ -80,6 +82,7 @@ public class FileManagerMvpPresenterImpl <MvpView extends BaseMvpView> extends R
     @Override
     public void setImageAdapterView(AdapterContract.View adapterView) {
         this.adapterView = adapterView;
+        this.adapterView.setOnClickListener(this);
     }
     ///////////////////////////////////////////////
 
@@ -109,4 +112,30 @@ public class FileManagerMvpPresenterImpl <MvpView extends BaseMvpView> extends R
                 itemFiles.add(file.getName());
         }
     }
+
+    @Override
+    public void onItemClick(int position) {
+        ItemObjects item = adapterModel.get(position);
+        //data를 받아온 다음에 activity를 활용한다.
+
+        if (item == null) {
+            view.showToast("Clicked item is null.. return");
+            return;
+        }
+        String path = item.path;
+        File file = new File(path);
+        if (file.isDirectory()) {
+            if (file.canRead()) {
+                //CurPath = path;
+                //setupAdapter();
+                loadItemList(path, true);
+            } else {
+                view.showToast(item.getName() + " is file");
+            }
+            Log.i("JYN", "[FileManagerMvpPresenterImpl][onItemClick] " + item.getName() + " is dir");
+        } else {
+            Log.i("JYN", "[FileManagerMvpPresenterImpl][onItemClick] " + item.getName() + " is file");
+        }
+        view.showToast("Clicked item = " + item.getName());
+     }
 }
