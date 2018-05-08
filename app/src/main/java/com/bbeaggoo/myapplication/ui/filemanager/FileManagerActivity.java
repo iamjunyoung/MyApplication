@@ -47,6 +47,8 @@ public class FileManagerActivity extends BaseActivity implements FileManagerMvpV
         layoutManager = new ItemLayoutManger(this);
         recyclerView.setLayoutManager(layoutManager);
 
+        textView = (TextView)findViewById(R.id.path_textview);
+
         //DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getApplicationContext(), layoutManager.getOrientation());
         //recyclerView.addItemDecoration(dividerItemDecoration);
         //Diveder관련. 출처: http://liveonthekeyboard.tistory.com/137 [키위남]
@@ -104,6 +106,11 @@ public class FileManagerActivity extends BaseActivity implements FileManagerMvpV
     public void showToast(String s) {
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void setPathToTextView(String curPath) {
+        textView.setText(curPath);
+    }
     ///////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +150,9 @@ public class FileManagerActivity extends BaseActivity implements FileManagerMvpV
             String searchText = editView.getText().toString();
             if( listViewAdapter!=null ) listViewAdapter.fillter(searchText);
 
-            textView.setText("Location: " + curPath);
+            //아래것도 MVP로
+            //textView.setText("Location: " + curPath);
+            presenter.setPathToTextView(curPath);
         }
 
     }

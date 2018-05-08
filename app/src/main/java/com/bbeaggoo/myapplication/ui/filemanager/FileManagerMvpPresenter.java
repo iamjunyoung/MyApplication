@@ -23,4 +23,6 @@ public interface FileManagerMvpPresenter<MvpView extends BaseMvpView> extends Ba
     void setImageAdapterModel(AdapterContract.Model adapterModel);
 
     void setImageAdapterView(AdapterContract.View adapterView);
+
+    void setPathToTextView(String curPath);
 }

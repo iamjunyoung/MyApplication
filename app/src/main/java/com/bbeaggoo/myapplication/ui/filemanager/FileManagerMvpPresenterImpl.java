@@ -84,6 +84,11 @@ public class FileManagerMvpPresenterImpl <MvpView extends BaseMvpView> extends R
         this.adapterView = adapterView;
         this.adapterView.setOnClickListener(this);
     }
+
+    @Override
+    public void setPathToTextView(String curPath) { // presenter랑 view랑 메서드 명이 이렇게 같으면 안될거같어
+        view.setPathToTextView(curPath);
+    }
     ///////////////////////////////////////////////
 
     private void getDirInfo(String dirPath)
@@ -129,6 +134,8 @@ public class FileManagerMvpPresenterImpl <MvpView extends BaseMvpView> extends R
                 //CurPath = path;
                 //setupAdapter();
                 loadItemList(path, true);
+
+                setPathToTextView(path);
             } else {
                 view.showToast(item.getName() + " is file");
             }
