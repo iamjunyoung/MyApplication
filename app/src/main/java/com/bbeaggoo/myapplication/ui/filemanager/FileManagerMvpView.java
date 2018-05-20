@@ -1,5 +1,7 @@
 package com.bbeaggoo.myapplication.ui.filemanager;
 
+import android.text.SpannableString;
+
 import com.bbeaggoo.myapplication.common.BaseMvpView;
 import com.bbeaggoo.myapplication.datas.ItemObjects;
 
@@ -21,5 +23,5 @@ interface FileManagerMvpView extends BaseMvpView {
 
     void showToast(String s);
 
-    void setPathToTextView(String curPath);
+    void setPathToTextView(SpannableString curPath);
 }

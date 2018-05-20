@@ -10,6 +10,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -108,8 +110,10 @@ public class FileManagerActivity extends BaseActivity implements FileManagerMvpV
     }
 
     @Override
-    public void setPathToTextView(String curPath) {
+    public void setPathToTextView(SpannableString curPath) {
         textView.setText(curPath);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+
     }
     ///////////////////////////////////////////////////////////////////
 
@@ -151,7 +155,7 @@ public class FileManagerActivity extends BaseActivity implements FileManagerMvpV
             if( listViewAdapter!=null ) listViewAdapter.fillter(searchText);
 
             //아래것도 MVP로
-            //textView.setText("Location: " + curPath);
+            //textView.setText("Location: " + curPath); //이렇게 하지말구
             presenter.setPathToTextView(curPath);
         }
 

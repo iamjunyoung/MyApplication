@@ -1,7 +1,12 @@
 package com.bbeaggoo.myapplication.ui.filemanager;
 
+import android.graphics.Color;
 import android.os.Environment;
+import android.text.SpannableString;
+import android.text.TextPaint;
+import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.view.View;
 
 import com.bbeaggoo.myapplication.adapter.AdapterContract;
 import com.bbeaggoo.myapplication.common.BaseMvpView;
@@ -12,6 +17,7 @@ import com.bbeaggoo.myapplication.singletons.FileItemsManager;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by junyoung on 2018. 4. 26..
@@ -85,9 +91,117 @@ public class FileManagerMvpPresenterImpl <MvpView extends BaseMvpView> extends R
         this.adapterView.setOnClickListener(this);
     }
 
+    ArrayList<String> list;
     @Override
     public void setPathToTextView(String curPath) { // presenter랑 view랑 메서드 명이 이렇게 같으면 안될거같어
-        view.setPathToTextView(curPath);
+        //list = new ArrayList<>();
+        Log.i("JYN", "cur " + curPath);
+
+        list = new ArrayList<String>(Arrays.asList(curPath.split("\\/")));
+        list.remove(0);
+        final int[] ii = {0};
+        list.forEach(v -> {
+            Log.i("JYN", "" + ii[0]++ + "    " + v);
+        } );
+
+        //ArrayList<PositionsOfEachWord> array = new ArrayList<>();
+        ArrayList<Integer> initialArray = new ArrayList<Integer>();
+        ArrayList<Integer> finalArray = new ArrayList<Integer>();
+
+        if (curPath.length() > 0) {
+            int i = 0;
+            int l = -1;
+            do{
+                l = curPath.indexOf("/", l + 1);
+                if ( l != -1 ) {
+                    Log.i("JYN", i + "번 째 위치에 add합니다" + l);
+                    initialArray.add(l);
+                    /*
+                    if (i != 0) {
+                        //array.add(i);
+                    } else {
+                        //array.add
+                    }
+                    */
+                    //Log.i("JYN", i++ + "번 째 위치 : " + l);
+                }
+            } while(l+1 < curPath.length() && l != -1);
+            Log.i("JYN", i + "번 째 위치에 add합니다" + (list.size()-1));
+            initialArray.add(curPath.length() - 1);
+
+            // 1, 7
+            // 9, 16
+            // 18, 18
+            // 20, 29 (length + 1)
+            final int[] jj = {0};
+            initialArray.forEach(v -> {
+                Log.i("JYN", "" + jj[0]++ + "    " + v);
+            });
+
+            ArrayList<Integer> convertArray = new ArrayList<>();
+            initialArray.forEach(v -> {
+                Log.i("JYN", "" + jj[0]++ + "    " + v);
+                if (v == 0 ) {
+                    convertArray.add(v + 1);
+                } else if ( v == curPath.length() - 1) {
+                    convertArray.add(v - 1);
+                } else {
+                    convertArray.add(v - 1);
+                    convertArray.add(v + 1);
+                }
+            });
+
+            final int[] kk = {0};
+            convertArray.forEach(v -> {
+                Log.i("JYN", "" + kk[0]++ + "    " + v);
+            });
+
+            //Collections.copy(finalArray, convertArray);
+            finalArray.addAll(convertArray);
+            //convertArray 의 사이즈가 8이라면 4번의 setSpan 이 필요 하다.
+        }
+
+        SpannableString totalSpan = new SpannableString("");
+        int needToMakeObject = list.size();
+        //for (int j = 0 ; j < needToMakeObject ; j++) {
+        int k = 0;
+        SpannableString spannableString = new SpannableString(curPath);
+        for (int j = 0 ; j < finalArray.size()/2 ; j++) {
+            //SpannableString spannableString = new SpannableString(list.get(j));
+            Log.i("JYN", "[for]" + j + "    " + spannableString);
+
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    // 해당 텍스트를 클릭했을 때 실행할
+                    view.showToast(" kkkk ");
+                    Log.i("JYN", "[FileManagerMvpPresenterImpl][ClickableSpan] " + widget.toString() + "  clickableSpan : " + spannableString );
+                }
+                @Override
+                public void updateDrawState(TextPaint textPaint) {
+                    textPaint.setColor(Color.rgb(243, 110, 84)); // 해당 텍스트 색상 변경
+                    textPaint.setUnderlineText(true); // 해당 텍스트 언더라인
+                    textPaint.setFakeBoldText(true); // 해당 텍스트 두껍게 처리
+                }
+            };
+
+            //spannableString.setSpan(clickableSpan, 0, spannableString.length(), 0);
+            //totalSpan = (SpannableString) TextUtils.concat(totalSpan, " " , spannableString);
+            //위처럼 하지말고
+            spannableString.setSpan(clickableSpan, finalArray.get(k), finalArray.get(k+1), 0 ); //이렇게 해야될듯
+            Log.i("JYN", "[for]" + j + "  k(" + k + ") " + finalArray.get(k)+ "  k + 1(" + (k + 1) + ") " + finalArray.get(k+1));
+
+            k = k+2;
+        }
+
+        //SpannableString spannableString = new SpannableString( curPath );
+        /////출처: http://altongmon.tistory.com/443 [IOS를 Java]
+        /////spannableString.setSpan(clickableSpan1, 클릭이벤트를 넣고 싶은 문자열의 시작 index, 클릭이벤트를 넣고 싶은 문자열의 끝 index, 0);
+        //spannableString.setSpan(clickableSpan1, 0, spannableString.length(), 0);
+
+        //view.setPathToTextView(curPath);
+
+        view.setPathToTextView(totalSpan);
     }
     ///////////////////////////////////////////////
 
@@ -145,4 +259,35 @@ public class FileManagerMvpPresenterImpl <MvpView extends BaseMvpView> extends R
         }
         view.showToast("Clicked item = " + item.getName());
      }
+
+     //아래를 for문에서 i만큼 생성해 줘야하고..
+    //onclick내부에서는 path에 해당하는 adapter를 load 해 달라고 해야하고..
+    //updateDrawState 에서는 클릭된 단어를 white로 해주도록 해야하고.
+    ClickableSpan clickableSpan1 = new ClickableSpan() {
+        @Override
+        public void onClick(View widget) {
+            // 해당 텍스트를 클릭했을 때 실행할
+            view.showToast(" kkkk ");
+            Log.i("JYN", "[FileManagerMvpPresenterImpl][ClickableSpan] kkk" );
+
+        }
+
+        @Override
+        public void updateDrawState(TextPaint textPaint) {
+            textPaint.setColor(Color.rgb(243, 110, 84)); // 해당 텍스트 색상 변경
+            textPaint.setUnderlineText(true); // 해당 텍스트 언더라인
+            textPaint.setFakeBoldText(true); // 해당 텍스트 두껍게 처리
+        }
+    };
+    //출처: http://altongmon.tistory.com/443 [IOS를 Java]
+
+    class PositionsOfEachWord {
+        int startPosition = -1;
+        int endPosition = -1;
+
+        public PositionsOfEachWord(int startPosition, int endPosition) {
+            this.startPosition = startPosition;
+            this.endPosition = endPosition;
+        }
+    }
 }
